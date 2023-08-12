@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "ip-cloud"
+version = "0.1.0"
+description = ""
+authors = ["6691a <6691a@naver.com>"]
+readme = "README.md"
+packages = [{include = "ip_cloud"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.4"
+django-filter = "^23.2"
+drf-spectacular = "^0.26.4"
+gunicorn = "^21.2.0"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
+pyyaml = "^6.0.1"
+django-cors-headers = "^4.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "1.4.1"
+django-stubs = "^4.2.3"
+djangorestframework-stubs = "^3.14.2"
+django-extensions = "^3.2.3"
+django-debug-toolbar = "^4.2.0"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+black = "^23.7.0"
+werkzeug = "^2.3.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+
+[tool.flake8]
+max-line-length = 100
+exclude = [".git", "__pycache__,", "*/migrations/*"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main",
+]
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
