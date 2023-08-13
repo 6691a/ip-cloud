@@ -5,6 +5,3 @@ INSTALLED_APPS += [
 ]
 
 MIDDLEWARE += []
-
-
-

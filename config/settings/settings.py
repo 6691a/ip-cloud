@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 from os import environ
 from pathlib import Path
+
 from yaml import safe_load
 
 file_name = environ.get("SETTINGS_FILE", "development.yaml")
 
-with open(file_name, 'r') as file:
+with open(file_name, "r") as file:
     cfg = safe_load(file)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    "modeltranslation",
 ]
 
 MIDDLEWARE = [
@@ -111,7 +113,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -123,3 +124,8 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = cfg["CORS_ALLOWED_ORIGINS"]
+
+LANGUAGES = cfg["LANGUAGES"]
+MODELTRANSLATION_LANGUAGES = ["ko", "en"]
+MODELTRANSLATION_DEFAULT_LANGUAGE = "ko"
+MODELTRANSLATION_FALLBACK_LANGUAGES = ["ko"]
