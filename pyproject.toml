@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "ip-cloud"
+name = "playhub"
 version = "0.1.0"
 description = ""
 authors = ["6691a <6691a@naver.com>"]
 readme = "README.md"
-packages = [{include = "ip_cloud"}]
+packages = [{include = "playhub"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -19,6 +19,7 @@ sentry-sdk = "^1.29.2"
 django-modeltranslation = "^0.18.11"
 babel = "^2.12.1"
 phonenumbers = "^8.13.18"
+django-storages = {extras = ["google"], version = "^1.14"}
 
 
 [tool.poetry.group.dev.dependencies]
