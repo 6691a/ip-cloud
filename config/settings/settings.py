@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from os import environ
 from pathlib import Path
 
+from google.oauth2 import service_account
 from yaml import safe_load
 
 file_name = environ.get("SETTINGS_FILE", "development.yaml")
@@ -20,7 +21,7 @@ with open(file_name, "r") as file:
     cfg = safe_load(file)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "modeltranslation",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -129,3 +131,10 @@ LANGUAGES = cfg["LANGUAGES"]
 MODELTRANSLATION_LANGUAGES = ["ko", "en"]
 MODELTRANSLATION_DEFAULT_LANGUAGE = "ko"
 MODELTRANSLATION_FALLBACK_LANGUAGES = ["ko"]
+
+CREDENTIALS = service_account.Credentials.from_service_account_file(
+    BASE_DIR / cfg["GCP_CREDENTIAL"]
+)
+STORAGES = cfg["STORAGES"]
+STORAGES["default"]["OPTIONS"]["credentials"] = CREDENTIALS
+STORAGES["staticfiles"]["OPTIONS"]["credentials"] = CREDENTIALS
