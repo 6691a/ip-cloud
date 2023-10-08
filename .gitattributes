@@ -1,0 +1,11 @@
+statics/assets/vendor/css/core.css filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/libs/moment/moment.js filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/css/rtl/core-dark.css filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/libs/mapbox-gl/mapbox-gl.js filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/libs/highlight/highlight.js filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/libs/quill/katex.js filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/libs/chartjs/chartjs.js filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/libs/fullcalendar/fullcalendar.js filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/css/core-dark.css filter=lfs diff=lfs merge=lfs -text
+statics/assets/vendor/css/rtl/core.css filter=lfs diff=lfs merge=lfs -text
