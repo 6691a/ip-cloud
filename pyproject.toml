@@ -20,6 +20,10 @@ django-modeltranslation = "^0.18.11"
 babel = "^2.12.1"
 phonenumbers = "^8.13.18"
 django-storages = {extras = ["google"], version = "^1.14"}
+django-allauth = "^0.57.0"
+django-redis = "^5.4.0"
+psycopg2-binary = "^2.9.9"
+django-phonenumber-field = "^7.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -52,10 +56,10 @@ plugins = [
     "mypy_django_plugin.main",
     "mypy_drf_plugin.main",
 ]
-strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 check_untyped_defs = true
+exclude = ["^migrations$", "^settings.py$", "^manage.py$"]
 
 [tool.django-stubs]
-django_settings_module = "config.settings"
+django_settings_module = "config.settings.settings"

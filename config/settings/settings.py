@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from os import environ
 from pathlib import Path
 
-from google.oauth2 import service_account
+from django.utils.translation import gettext_lazy as _
 from yaml import safe_load
 
-file_name = environ.get("SETTINGS_FILE", "development.yaml")
+file_name = environ.get("", "development.yaml")
 
 with open(file_name, "r") as file:
     cfg = safe_load(file)
@@ -43,10 +43,25 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+INSTALLED_LIBRARY_APPS = [
     "corsheaders",
     "modeltranslation",
     "storages",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "phonenumber_field",
 ]
+
+INSTALLED_PROJECT_APPS = [
+    "accounts",
+    "app",
+]
+
+INSTALLED_APPS += INSTALLED_LIBRARY_APPS + INSTALLED_PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -57,6 +72,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -64,7 +81,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -72,13 +89,20 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",
+            ],
+            # "libraries": {
+            #     "theme": "web_project.template_tags.theme",
+            # },
+            "builtins": [
+                # "django.templatetags.static",
+                "utility.template.theme",
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -103,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -118,7 +141,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/statics/"
+
+STATICFILES_DIRS = [BASE_DIR / "statics" / "assets"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -127,14 +152,44 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = cfg["CORS_ALLOWED_ORIGINS"]
 
-LANGUAGES = cfg["LANGUAGES"]
-MODELTRANSLATION_LANGUAGES = ["ko", "en"]
-MODELTRANSLATION_DEFAULT_LANGUAGE = "ko"
-MODELTRANSLATION_FALLBACK_LANGUAGES = ["ko"]
+LOCALE_PATHS = [
+    BASE_DIR / "locales",
+]
 
-CREDENTIALS = service_account.Credentials.from_service_account_file(
-    BASE_DIR / cfg["GCP_CREDENTIAL"]
-)
-STORAGES = cfg["STORAGES"]
-STORAGES["default"]["OPTIONS"]["credentials"] = CREDENTIALS
-STORAGES["staticfiles"]["OPTIONS"]["credentials"] = CREDENTIALS
+LANGUAGES = [
+    ("ko", _("Korean")),
+    ("en", _("English")),
+]
+
+MODELTRANSLATION_LANGUAGES = ["ko", "en"]
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = "ko"
+
+MODELTRANSLATION_FALLBACK_LANGUAGES = ["ko", "en"]
+
+AUTH_USER_MODEL = "accounts.Accounts"
+
+# Allauth
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 4
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_SIGNUP_REDIRECT_URL = "/ㅁㄴㅇㄹㅁㅇㄹ/ㅁㄴㅇㄹㅁㄴㅇㄹㅁ"
+LOGIN_REDIRECT_URL = "/"
+
+# Session
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# 30 minutes
+SESSION_COOKIE_AGE = 60 * 30
+SESSION_CACHE_ALIAS = "session"
+
+# Cache
+CACHES = cfg["CACHES"]
