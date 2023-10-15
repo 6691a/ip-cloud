@@ -13,6 +13,7 @@ from os import environ
 from pathlib import Path
 
 from google.oauth2 import service_account
+from structlog import configure, contextvars, processors, stdlib
 from yaml import safe_load
 
 file_name = environ.get("SETTINGS_FILE", "development.yaml")
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_structlog.middlewares.RequestMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -138,3 +140,83 @@ CREDENTIALS = service_account.Credentials.from_service_account_file(
 STORAGES = cfg["STORAGES"]
 STORAGES["default"]["OPTIONS"]["credentials"] = CREDENTIALS
 STORAGES["staticfiles"]["OPTIONS"]["credentials"] = CREDENTIALS
+
+# Logging
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "key_value": {
+            "()": stdlib.ProcessorFormatter,
+            "processor": processors.KeyValueRenderer(
+                key_order=[
+                    "timestamp",
+                    "level",
+                    "pathname",
+                    "func_name",
+                    "lineno",
+                    "event",
+                    "logger",
+                ]
+            ),
+        },
+    },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "key_value",
+            "filters": ["require_debug_true"],
+        },
+        "django": {
+            "level": "DEBUG",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "when": "midnight",
+            "interval": 1,
+            "backupCount": 15,
+            "filename": BASE_DIR / "logs" / "log.log",
+            "formatter": "key_value",
+            "encoding": "utf-8",
+            "filters": ["require_debug_true"],
+        },
+    },
+    "loggers": {
+        "django": {
+            # "handlers": ["console", "django"],
+            "handlers": ["django"],
+            "level": "INFO",
+        },
+    },
+}
+configure(
+    processors=[
+        contextvars.merge_contextvars,
+        stdlib.filter_by_level,
+        processors.TimeStamper(fmt="iso"),
+        stdlib.add_logger_name,
+        stdlib.add_log_level,
+        stdlib.PositionalArgumentsFormatter(),
+        processors.StackInfoRenderer(),
+        processors.format_exc_info,
+        processors.UnicodeDecoder(),
+        processors.ExceptionPrettyPrinter(),
+        processors.CallsiteParameterAdder(
+            {
+                processors.CallsiteParameter.PATHNAME,
+                processors.CallsiteParameter.FUNC_NAME,
+                processors.CallsiteParameter.LINENO,
+            }
+        ),
+        stdlib.ProcessorFormatter.wrap_for_formatter,
+    ],
+    logger_factory=stdlib.LoggerFactory(),
+    cache_logger_on_first_use=True,
+)

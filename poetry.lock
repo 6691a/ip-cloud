@@ -316,6 +316,17 @@ files = [
 Django = ">=3.2"
 
 [[package]]
+name = "django-ipware"
+version = "5.0.1"
+description = "A Django application to retrieve user's IP address"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django-ipware-5.0.1.tar.gz", hash = "sha256:176fddb27d8d0f96fe3872fe03a781ea96638553e05842d89c12a3dd9bedf5f5"},
+    {file = "django_ipware-5.0.1-py2.py3-none-any.whl", hash = "sha256:1d34382cb95e0fd0273321a51c39429c5b435c01754c02218658acf151ce9107"},
+]
+
+[[package]]
 name = "django-modeltranslation"
 version = "0.18.11"
 description = "Translates Django models using a registration approach."
@@ -353,6 +364,27 @@ google = ["google-cloud-storage (>=1.27.0)"]
 libcloud = ["apache-libcloud"]
 s3 = ["boto3 (>=1.4.4)"]
 sftp = ["paramiko (>=1.15.0)"]
+
+[[package]]
+name = "django-structlog"
+version = "6.0.0"
+description = "Structured Logging for Django"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django-structlog-6.0.0.tar.gz", hash = "sha256:07d9b35cdc3aca6de1daacb0ad7a7c58e0506a858687844ff770eb4bde5d0236"},
+    {file = "django_structlog-6.0.0-py3-none-any.whl", hash = "sha256:233a5cc81981c547a702e141d1ece89a02a47e8127a8d0c80c8d9add4324dea2"},
+]
+
+[package.dependencies]
+asgiref = ">=3.6.0"
+django = ">=3.2"
+django-ipware = "*"
+structlog = ">=21.4.0"
+
+[package.extras]
+celery = ["celery (>=5.1)"]
+commands = ["django-extensions (>=1.4.9)"]
 
 [[package]]
 name = "django-stubs"
@@ -1375,6 +1407,23 @@ doc = ["sphinx"]
 test = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "structlog"
+version = "23.2.0"
+description = "Structured Logging for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "structlog-23.2.0-py3-none-any.whl", hash = "sha256:16a167e87b9fa7fae9a972d5d12805ef90e04857a93eba479d4be3801a6a1482"},
+    {file = "structlog-23.2.0.tar.gz", hash = "sha256:334666b94707f89dbc4c81a22a8ccd34449f0201d5b1ee097a030b577fa8c858"},
+]
+
+[package.extras]
+dev = ["structlog[tests,typing]"]
+docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-mermaid", "twisted"]
+tests = ["freezegun (>=0.2.8)", "pretend", "pytest (>=6.0)", "pytest-asyncio (>=0.17)", "simplejson"]
+typing = ["mypy (>=1.4)", "rich", "twisted"]
+
+[[package]]
 name = "types-pytz"
 version = "2023.3.0.0"
 description = "Typing stubs for pytz"
@@ -1673,4 +1722,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "6a0a7a88366e801c44f9d9c1acc87f188e32b17a410ae405f699cfe0353c9c01"
+content-hash = "750a0e9ff56dc8be3e480783316233fa6115ca4d0815eef6a14dd4cf47834d2f"
