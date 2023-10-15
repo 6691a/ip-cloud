@@ -20,6 +20,7 @@ django-modeltranslation = "^0.18.11"
 babel = "^2.12.1"
 phonenumbers = "^8.13.18"
 django-storages = {extras = ["google"], version = "^1.14"}
+django-structlog = "^6.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
