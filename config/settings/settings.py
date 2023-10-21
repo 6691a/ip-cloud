@@ -146,19 +146,9 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "key_value": {
+        "json": {
             "()": stdlib.ProcessorFormatter,
-            "processor": processors.KeyValueRenderer(
-                key_order=[
-                    "timestamp",
-                    "level",
-                    "pathname",
-                    "func_name",
-                    "lineno",
-                    "event",
-                    "logger",
-                ]
-            ),
+            "processor": processors.JSONRenderer(),
         },
     },
     "filters": {
@@ -173,7 +163,7 @@ LOGGING = {
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
-            "formatter": "key_value",
+            "formatter": "json",
             "filters": ["require_debug_true"],
         },
         "django": {
@@ -183,15 +173,14 @@ LOGGING = {
             "interval": 1,
             "backupCount": 15,
             "filename": BASE_DIR / "logs" / "log.log",
-            "formatter": "key_value",
+            "formatter": "json",
             "encoding": "utf-8",
-            "filters": ["require_debug_true"],
+            "filters": ["require_debug_false"],
         },
     },
     "loggers": {
         "django": {
-            # "handlers": ["console", "django"],
-            "handlers": ["django"],
+            "handlers": ["console", "django"],
             "level": "INFO",
         },
     },
