@@ -1,0 +1,19 @@
+# postgres
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: playhub
+      POSTGRES_PASSWORD: playhub
+      POSTGRES_DB: playhub
+    volumes:
+      - playhub:/var/lib/postgresql/data
+    container_name: playhub-db
+
+volumes:
+  playhub:
