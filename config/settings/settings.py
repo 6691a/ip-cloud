@@ -12,17 +12,18 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from os import environ
 from pathlib import Path
 
+from django.utils.translation import gettext_lazy as _
 from google.oauth2 import service_account
 from structlog import configure, contextvars, processors, stdlib
 from yaml import safe_load
 
-file_name = environ.get("SETTINGS_FILE", "development.yaml")
-
-with open(file_name, "r") as file:
-    cfg = safe_load(file)
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+SETTING_FILE = environ.get("SETTING_FILE", "development.yaml")
+
+with open(f"{BASE_DIR}/config/{SETTING_FILE}", "r") as file:
+    cfg = safe_load(file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -129,7 +130,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = cfg["CORS_ALLOWED_ORIGINS"]
 
-LANGUAGES = cfg["LANGUAGES"]
+LANGUAGES = [
+    ("ko", _("Korean")),
+    ("en", _("English")),
+]
 MODELTRANSLATION_LANGUAGES = ["ko", "en"]
 MODELTRANSLATION_DEFAULT_LANGUAGE = "ko"
 MODELTRANSLATION_FALLBACK_LANGUAGES = ["ko"]
