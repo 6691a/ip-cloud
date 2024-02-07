@@ -19,8 +19,14 @@ sentry-sdk = "^1.29.2"
 django-modeltranslation = "^0.18.11"
 babel = "^2.12.1"
 phonenumbers = "^8.13.18"
-django-storages = {extras = ["google"], version = "^1.14"}
 django-structlog = "^6.0.0"
+logging = "^0.4.9.6"
+django-simple-history = "^3.4.0"
+django-storages = {extras = ["azure"], version = "^1.14.2"}
+django-allauth = "^0.60.0"
+django-phonenumber-field = {extras = ["phonenumbers"], version = "^7.3.0"}
+psycopg2-binary = "^2.9.9"
+django-redis = "^5.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -47,16 +53,19 @@ exclude = [".git", "__pycache__,", "*/migrations/*"]
 ignore = ["F403", "F405"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 ignore_missing_imports = true
 plugins = [
     "mypy_django_plugin.main",
     "mypy_drf_plugin.main",
 ]
-strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 check_untyped_defs = true
+exclude = ["^migrations$", "^settings.py$", "^manage.py$"]
 
 [tool.django-stubs]
-django_settings_module = "config.settings"
+django_settings_module = "config.settings.settings"
+
+[tool.isort]
+profile = "black"

@@ -15,5 +15,16 @@ services:
       - playhub:/var/lib/postgresql/data
     container_name: playhub-db
 
+  redis:
+    image: redis
+    container_name: playhub-redis
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - redis:/data
+
+
 volumes:
   playhub:
+  redis:

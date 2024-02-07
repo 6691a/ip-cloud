@@ -9,11 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+
 from os import environ
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
-from google.oauth2 import service_account
 from structlog import configure, contextvars, processors, stdlib
 from yaml import safe_load
 
@@ -35,9 +35,9 @@ SECRET_KEY = cfg["SECRET_KEY"]
 DEBUG = cfg["DEBUG"]
 
 ALLOWED_HOSTS = cfg["ALLOWED_HOSTS"]
+INTERNAL_IPS = cfg["INTERNAL_IPS"]
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -45,10 +45,27 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+INSTALLED_LIBRARY_APPS = [
     "corsheaders",
     "modeltranslation",
     "storages",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "phonenumber_field",
+    "django_structlog",
+    "simple_history",
 ]
+
+INSTALLED_PROJECT_APPS = [
+    "index",
+    "accounts",
+]
+
+INSTALLED_APPS += INSTALLED_LIBRARY_APPS + INSTALLED_PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -60,6 +77,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_structlog.middlewares.RequestMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -67,7 +87,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -75,6 +95,10 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",
+            ],
+            "builtins": [
+                "utility.template.theme",
             ],
         },
     },
@@ -122,28 +146,61 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static" / "assets"]
+
+MEDIA_URL = "media/"
+
+# STORAGES = cfg["STORAGES"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = cfg["CORS_ALLOWED_ORIGINS"]
 
+AUTH_USER_MODEL = "accounts.Accounts"
+
+# Allauth
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 4
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+ACCOUNT_ADAPTER = "accounts.adapters.AccountAdapter"
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_ADAPTER = "accounts.adapters.SocialAccountAdapter"
+# ACCOUNT_SIGNUP_REDIRECT_URL = ""
+LOGIN_REDIRECT_URL = "/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/accounts/confirm/"
+
+# Session
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_COOKIE_AGE = 60 * 30
+SESSION_CACHE_ALIAS = "session"
+
+# Cache
+CACHES = cfg["CACHES"]
+
+# LANGUAGES = [
+#     ("ko", _("Korean")),
+#     ("en", _("English")),
+# ]
 LANGUAGES = [
-    ("ko", _("Korean")),
     ("en", _("English")),
+    ("fr", _("French")),
+    ("ar", _("Arabic")),
+    ("de", _("German")),
+    # Add more languages as needed
 ]
 MODELTRANSLATION_LANGUAGES = ["ko", "en"]
 MODELTRANSLATION_DEFAULT_LANGUAGE = "ko"
 MODELTRANSLATION_FALLBACK_LANGUAGES = ["ko"]
-
-CREDENTIALS = service_account.Credentials.from_service_account_file(
-    BASE_DIR / cfg["GCP_CREDENTIAL"]
-)
-STORAGES = cfg["STORAGES"]
-STORAGES["default"]["OPTIONS"]["credentials"] = CREDENTIALS
-STORAGES["staticfiles"]["OPTIONS"]["credentials"] = CREDENTIALS
 
 # Logging
 LOGGING = {
@@ -213,3 +270,13 @@ configure(
     logger_factory=stdlib.LoggerFactory(),
     cache_logger_on_first_use=True,
 )
+
+# Email
+EMAIL = cfg["EMAIL"]
+EMAIL_BACKEND = EMAIL["BACKEND"]
+EMAIL_HOST = EMAIL["HOST"]
+EMAIL_PORT = EMAIL["PORT"]
+EMAIL_HOST_USER = EMAIL["HOST_USER"]
+EMAIL_HOST_PASSWORD = EMAIL["HOST_PASSWORD"]
+EMAIL_USE_TLS = EMAIL["USE_TLS"]
+DEFAULT_FROM_EMAIL = EMAIL["DEFAULT_FROM_EMAIL"]
