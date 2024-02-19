@@ -96,6 +96,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.i18n",
+                # "utility.template.context_processors.toast_tags",
             ],
             "builtins": [
                 "utility.template.theme",
@@ -173,11 +174,10 @@ ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 4
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 ACCOUNT_ADAPTER = "accounts.adapters.AccountAdapter"
-SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_ADAPTER = "accounts.adapters.SocialAccountAdapter"
 # ACCOUNT_SIGNUP_REDIRECT_URL = ""
 LOGIN_REDIRECT_URL = "/"
-ACCOUNT_SIGNUP_REDIRECT_URL = "/accounts/confirm/"
+# ACCOUNT_SIGNUP_REDIRECT_URL = "/accounts/confirm/"
 
 # Session
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"

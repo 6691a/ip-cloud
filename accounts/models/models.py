@@ -19,9 +19,7 @@ logging = get_logger(__name__)
 class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     email = models.EmailField(_("email address"), unique=True, db_column="email")
     name = models.CharField(_("name"), max_length=30, blank=True, db_column="name")
-    gender = models.CharField(
-        _("gender"), max_length=1, choices=Gender.choices, blank=True, db_column="gender"
-    )
+    gender = models.CharField(_("gender"), max_length=1, choices=Gender.choices, blank=True, db_column="gender")
     # 12자리의 랜덤 숫자를 만든다
     alias = models.CharField(
         _("alias"),
@@ -37,8 +35,7 @@ class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
         default=True,
         db_column="active",
         help_text=_(
-            "Designates whether this user should be treated as "
-            "active. Unselect this instead of deleting accounts."
+            "Designates whether this user should be treated as " "active. Unselect this instead of deleting accounts."
         ),
     )
     is_staff = models.BooleanField(
@@ -62,6 +59,9 @@ class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
         alias를 생성한다.
         """
         return "".join([str(randint(0, 9)) for _ in range(randint(1, digits))]).zfill(digits)
+
+    def is_required_info(self) -> bool:
+        return all([bool(self.name), bool(self.gender)])
 
     def save(self, *args, **kwargs):
         if self.is_staff or self.is_superuser:

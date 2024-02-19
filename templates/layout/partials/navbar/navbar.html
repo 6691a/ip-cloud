@@ -121,7 +121,7 @@
                     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                       <div>
                        <button type="button" class="btn rounded-pill btn-primary waves-effect waves-light">
-                            {{ request.user.last_name }}{{ request.user.first_name }}
+                            {{ request.user.name|slice:":5" }}
                         </button>
                       </div>
                     </a>

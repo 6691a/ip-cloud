@@ -19,10 +19,10 @@
     {% include is_front|yesno:"./partials/styles_front.html,./partials/styles.html" %}
 
     {% block vendor_css %}{% endblock vendor_css %}
+    <link rel="stylesheet" href="{% static 'vendor/libs/toastr/toastr.css' %}" />
 
     <!--Page CSS-->
     {% block page_css %}{% endblock page_css %}
-
 
     <!-- Include the scripts partial (required ) -->
     {% include is_front|yesno:"./partials/scripts_includes_front.html,./partials/scripts_includes.html" %}
@@ -42,7 +42,49 @@
     {% block vendor_js %} {% endblock vendor_js %}
 
     <!--Page Javascript-->
+    <script src="{% static 'vendor/libs/toastr/toastr.js' %}"></script>
     {% block page_js %} {% endblock page_js %}
+
+    {# TODO: Separate this code into a separate .js file  #}
+    <script>
+        {% if messages %}
+            class Toastr{
+            constructor(tagString, _message) {
+               const [level, position, close] = tagString.split('_');
+                this.level = level;
+                this.message = _message;
+                this.position = position;
+                this.close = close === 'True';
+            }
+
+            show() {
+                toastr.options.closeButton = this.close;
+                toastr.options.positionClass = this.position;
+                this.toastr = toastr[this.level](this.message);
+            }
+        }
+        {% endif  %}
+    {% for message in messages %}
+        toastr.options = {
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "10000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+        new Toastr( "{{ message.extra_tags }}",  "{{ message }}").show();
+    {#  TODO js file  #}
+    {% endfor %}
+        </script>
 
   </body>
 
