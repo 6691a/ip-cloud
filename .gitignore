@@ -337,4 +337,4 @@ config/production.yaml
 
 *credential.json
 
-statics/
+static/

@@ -1,0 +1,10 @@
+{
+  "menu": [
+    {
+      "url": "index:index",
+      "icon": "menu-icon tf-icons ti ti-smart-home",
+      "name": "Page 1",
+      "slug": "index"
+    }
+  ]
+}
