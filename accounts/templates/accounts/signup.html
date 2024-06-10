@@ -1,0 +1,219 @@
+{% extends layout_path %}
+
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Register Cover - Pages{% endblock %}
+
+{% block vendor_css %}
+    {{ block.super }}
+    <link rel="stylesheet"
+          href="{% static 'vendor/libs/@form-validation/umd/styles/index.min.css' %}" />
+    <link rel="stylesheet"
+          href="{% static 'vendor/libs/bootstrap-select/bootstrap-select.css' %}" />
+    <link rel="stylesheet"
+          href="{% static 'vendor/libs/select2/select2.css' %}" />
+{% endblock vendor_css %}
+
+{% block vendor_js %}
+    {{ block.super }}
+    <script src="{% static 'vendor/libs/@form-validation/umd/bundle/popular.min.js' %}"></script>
+    <script src="{% static 'vendor/libs/@form-validation/umd/plugin-auto-focus/index.min.js' %}"></script>
+    <script src="{% static 'vendor/libs/@form-validation/umd/plugin-bootstrap5/index.min.js' %}"></script>
+    <script src="{% static 'vendor/libs/bootstrap-select/bootstrap-select.js' %}"></script>
+    <script src="{% static 'vendor/libs/select2/select2.js' %}"></script>
+    <script src="{% static 'js/forms-selects.js' %}"></script>
+{% endblock vendor_js %}
+
+{% block page_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'vendor/css/pages/page-auth.css' %}" />
+{% endblock page_css %}
+
+{% block page_js %}
+    {{ block.super }}
+    <script src="{% static 'js/pages-auth.js' %}"></script>
+{% endblock page_js %}
+
+{% block content %}
+    <div class="authentication-wrapper authentication-cover authentication-bg">
+        <div class="authentication-inner row">
+
+            <!-- /Left Text -->
+            <div class="d-none d-lg-flex col-lg-7 p-0">
+                <div class="auth-cover-bg auth-cover-bg-color d-flex justify-content-center align-items-center">
+                    <img src="{% static 'img/illustrations/auth-register-illustration-' %}{{ COOKIES.style|default:style }}.png"
+                         alt="auth-register-cover"
+                         class="img-fluid my-5 auth-illustration"
+                         data-app-light-img="illustrations/auth-register-illustration-light.png"
+                         data-app-dark-img="illustrations/auth-register-illustration-dark.png">
+
+                    <img src="{% static 'img/illustrations/bg-shape-image-' %}{{ COOKIES.style|default:style }}.png"
+                         alt="auth-register-cover"
+                         class="platform-bg"
+                         data-app-light-img="illustrations/bg-shape-image-light.png"
+                         data-app-dark-img="illustrations/bg-shape-image-dark.png">
+                </div>
+            </div>
+            <!-- /Left Text -->
+            <!-- Register -->
+            <div class="d-flex col-12 col-lg-5 align-items-center p-sm-5 p-4">
+                <div class="w-px-400 mx-auto">
+                    <!-- Logo -->
+                    <div class="pp-brand mb-4">
+                        <a href="{% url 'index:index' %}" class="app-brand-link">
+                            <span class="app-brand-logo demo">{% include 'partials/logo.html' %}</span>
+                        </a>
+                    </div>
+                    <!-- /Logo -->
+                    <h3 class="mb-1">Adventure starts here 🚀</h3>
+                    <p class="mb-4">Make your app management easy and fun!</p>
+                    <form id="formAuthentication"
+                          class="mb-3"
+                          action="{% url 'accounts:signup' %}"
+                          method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email"
+                                   class="form-control"
+                                   id="email"
+                                   name="email"
+                                   placeholder="Enter your email"
+                                   autofocus
+                                   autocorrect="off"
+                                   value="{{ form.email.value|default_if_none:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text"
+                                   class="form-control{% if form.name.errors %} is-invalid{% endif %}"
+                                   id="name"
+                                   name="name"
+                                   placeholder="Enter your name"
+                                   autocorrect="off"
+                                   value="{{ form.name.value|default_if_none:'' }}">
+                            {% if form.name.errors %}
+                                {% for error in form.name.errors %}
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="col-md-3">
+                                    <select id="selectpickerLiveSearch"
+                                            class="selectpicker w-100{% if form.phone.errors %} is-invalid{% endif %}"
+                                            data-style="btn-default"
+                                            data-live-search="true"
+                                            name="phone_0">
+                                        {% for value, label in countries %}
+                                            <option value="{{ value }}"
+                                                    {% if value == selected_country %}selected {% elif value == country_code %} selected {% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <input type="tel"
+                                       class="form-control phone-number-mask{% if form.phone.errors %} is-invalid{% endif %}"
+                                       id="phone"
+                                       name="phone_1"
+                                       placeholder="Enter your phone"
+                                       autocorrect="off"
+                                       value="{{ phone|default_if_none:'' }}">
+                            </div>
+                            {% if form.name.errors %}
+                                {% for error in form.phone.errors %}
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectpickerBasic" class="form-label">Gender</label>
+                            <select id="selectpickerBasic"
+                                    class="selectpicker w-100{% if form.gender.errors %} is-invalid{% endif %}"
+                                    data-style="btn-default"
+                                    name="gender">
+                                {% for value, label in form.gender.field.choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                            </select>
+                            {% if form.gender.errors %}
+                                {% for error in form.gender.errors %}
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3 form-password-toggle">
+                            <label class="form-label" for="password">Password</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password"
+                                       id="password"
+                                       class="form-control{% if form.password1.errors %} is-invalid{% endif %}"
+                                       name="password1"
+                                       autocomplete="off"
+                                       autocorrect="off"
+                                       placeholder="············"
+                                       aria-describedby="password" />
+                                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                            </div>
+                            {% if form.password1.errors %}
+                                {% for error in form.password1.errors %}
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 form-password-toggle">
+                            <label class="form-label" for="re-password">Re-Password</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password"
+                                       id="re-password"
+                                       class="form-control{% if form.password2.errors %} is-invalid{% endif %}"
+                                       name="password2"
+                                       autocomplete="off"
+                                       autocorrect="off"
+                                       placeholder="············"
+                                       aria-describedby="re-password" />
+                                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                            </div>
+                            {% if form.password2.errors %}
+                                {% for error in form.password2.errors %}
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="terms-conditions"
+                                       name="terms">
+                                <label class="form-check-label" for="terms-conditions">
+                                    I agree to
+                                    <a href="javascript:void(0);">privacy policy & terms</a>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary d-grid w-100" type="submit">Sign up</button>
+                    </form>
+
+                    <p class="text-center">
+                        <span>Already have an account?</span>
+                        <a href="{% url 'accounts:login' %}">
+                            <span>Sign in instead</span>
+                        </a>
+                    </p>
+
+                    <div class="divider my-4">
+                        <div class="divider-text">or</div>
+                    </div>
+
+                    {% include "accounts/partials/social_account.html" %}
+                </div>
+            </div>
+            <!-- /Register -->
+        </div>
+    </div>
+{% endblock content %}
