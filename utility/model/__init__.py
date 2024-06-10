@@ -1,3 +1,4 @@
-from .base_model import TimeStampedModel
+from .managers import DeleteTimeStampModelManager
+from .models import DeleteTimeStampModel, TimeStampModel
 
-__all__ = ["TimeStampedModel"]
+__all__ = ["TimeStampModel", "DeleteTimeStampModel", "DeleteTimeStampModelManager"]

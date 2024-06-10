@@ -46,8 +46,8 @@
 
                     <h3 class="mb-1">Verify your email ✉️</h3>
                     <p class="text-start mb-4">
-                        Account activation link sent to your email address: <strong> {{ email }} </strong> <br> Please
-                        follow the link inside to continue.
+                        Account activation link sent to your email address{% if email %}: <strong>{{ email }}</strong>{% endif %}.
+                        <br> Please follow the link inside to continue.
                     </p>
                     <a class="btn btn-primary w-100 mb-3" href="{% url 'index:index' %}">
                         Skip for now

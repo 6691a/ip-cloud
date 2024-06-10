@@ -8,7 +8,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from simple_history.models import HistoricalRecords
 from structlog import get_logger
 
-from utility.model import TimeStampedModel
+from utility.model import TimeStampModel
 
 from .choices import Gender
 from .managers import AccountsManager
@@ -16,7 +16,7 @@ from .managers import AccountsManager
 logging = get_logger(__name__)
 
 
-class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
+class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampModel):
     email = models.EmailField(_("email address"), unique=True, db_column="email")
     name = models.CharField(_("name"), max_length=30, blank=True, db_column="name")
     gender = models.CharField(_("gender"), max_length=1, choices=Gender.choices, blank=True, db_column="gender")
@@ -61,7 +61,7 @@ class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
         return "".join([str(randint(0, 9)) for _ in range(randint(1, digits))]).zfill(digits)
 
     def is_required_info(self) -> bool:
-        return all([bool(self.name), bool(self.gender)])
+        return all([bool(self.name), bool(self.gender), bool(self.phone)])
 
     def save(self, *args, **kwargs):
         if self.is_staff or self.is_superuser:

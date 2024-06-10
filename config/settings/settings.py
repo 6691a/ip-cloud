@@ -45,11 +45,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 INSTALLED_LIBRARY_APPS = [
-    "corsheaders",
-    "modeltranslation",
     "storages",
     "allauth",
     "allauth.account",
@@ -61,15 +60,16 @@ INSTALLED_LIBRARY_APPS = [
 ]
 
 INSTALLED_PROJECT_APPS = [
-    "index",
+    # "index",
     "accounts",
+    "network",
+    "instance",
 ]
 
 INSTALLED_APPS += INSTALLED_LIBRARY_APPS + INSTALLED_PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -161,6 +161,8 @@ CORS_ALLOWED_ORIGINS = cfg["CORS_ALLOWED_ORIGINS"]
 
 AUTH_USER_MODEL = "accounts.Accounts"
 
+SITE_ID = 1
+
 # Allauth
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
@@ -170,7 +172,7 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 4
+AACCOUNT_RATE_LIMITS = {"login_failed": {"count": 5, "period": 300}}
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 ACCOUNT_ADAPTER = "accounts.adapters.AccountAdapter"
@@ -198,9 +200,6 @@ LANGUAGES = [
     ("de", _("German")),
     # Add more languages as needed
 ]
-MODELTRANSLATION_LANGUAGES = ["ko", "en"]
-MODELTRANSLATION_DEFAULT_LANGUAGE = "ko"
-MODELTRANSLATION_FALLBACK_LANGUAGES = ["ko"]
 
 # Logging
 LOGGING = {
@@ -280,3 +279,7 @@ EMAIL_HOST_USER = EMAIL["HOST_USER"]
 EMAIL_HOST_PASSWORD = EMAIL["HOST_PASSWORD"]
 EMAIL_USE_TLS = EMAIL["USE_TLS"]
 DEFAULT_FROM_EMAIL = EMAIL["DEFAULT_FROM_EMAIL"]
+
+
+# Kafka
+KAFKA = cfg["KAFKA"]
