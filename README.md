@@ -11,12 +11,14 @@ pyenv install 3.12.2
 
 ### Create virtualenv
 ```
+poetry env use $(pyenv which python3.12)
 poetry shell
 ```
 
 ### Install requirements
 ```
-poetry install
+poetry install --dev
+poetry env info
 ```
 
 ### pre-commit

@@ -1,7 +1,61 @@
-# postgres
-version: "3"
+version: "3.8"
+
+volumes:
+  playhub:
+  redis:
+#  kafka0:
+
+x-playhub-common:
+  &playhub-common
+  build :
+    context: ../../
+    dockerfile: deploy/development/Dockerfile
+  environment:
+    # DEPLOY_LEVEL production or development
+    - DEPLOY_LEVEL=development
 
 services:
+#  backend:
+#    <<: *playhub-common
+#    container_name: playhub-server
+#    ports:
+#      - "8080:8080"
+#    command:
+#      - gunicorn config.wsgi:application
+
+  celery-default:
+    <<: *playhub-common
+    container_name: playhub-celery-default
+    command: poetry run celery -A config worker -l info -Q default
+    depends_on:
+      - redis
+      - postgres
+
+  celery-notification:
+    <<: *playhub-common
+    container_name: playhub-celery-notification
+    command: poetry run celery -A config worker -l info -Q notification
+    depends_on:
+      - redis
+      - postgres
+
+#  celery-beat:
+#    <<: *playhub-common
+#    container_name: playhub-celery-beat
+#    command: celery -A playhub beat -l info
+
+  flower:
+    image: mher/flower
+    container_name: playhub-flower
+    ports:
+      - "5555:5555"
+    restart: always
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/15
+    depends_on:
+      - celery-default
+      - celery-notification
+
   postgres:
     image: postgres
     restart: always
@@ -24,63 +78,58 @@ services:
     volumes:
       - redis:/data
 
-  kafka0:
-    container_name: kafka0
-    image: confluentinc/cp-kafka
-    ports:
-      - "9092:9092"
-    volumes:
-      - kafka0:/var/lib/kafka/data
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka0:29092,PLAINTEXT_HOST://localhost:9092'
-      KAFKA_LISTENERS: 'PLAINTEXT://kafka0:29092,CONTROLLER://kafka0:29093,PLAINTEXT_HOST://0.0.0.0:9092'
-      KAFKA_PROCESS_ROLES: 'broker,controller'
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka0:29093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      CLUSTER_ID: ${KAFKA_CLUSTER_ID:-MkU3OEVBNTcwNTJENDM2Qk}
-
-  kafka-schema-registry:
-    image: confluentinc/cp-schema-registry
-    container_name: kafka-schema-registry
-    restart: always
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:29092
-      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
-      SCHEMA_REGISTRY_HOST_NAME: schemaregistry1
-      SCHEMA_REGISTRY_LISTENERS: http://kafka-schema-registry:8081
-      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
-      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
-      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
-    depends_on:
-      - kafka0
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    restart: always
-    container_name: kafka-ui
-    ports:
-      - '18080:8080'
-    environment:
-      - DYNAMIC_CONFIG_ENABLED='true'
-      - KAFKA_CLUSTERS_0_NAME=Local-Kafka-Broker
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka0:29092
-      - DYNAMIC_CONFIG_ENABLED=true
-      - KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED=true
-      - KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED=true
-      - KAFKA_CLUSTERS_0_SCHEMAREGISTRY=http://kafka-schema-registry:8081
-    depends_on:
-      - kafka0
-      - kafka-schema-registry
-
-volumes:
-  playhub:
-  redis:
-  kafka0:
+#  kafka0:
+#    container_name: kafka0
+#    image: confluentinc/cp-kafka
+#    ports:
+#      - "9092:9092"
+#    volumes:
+#      - kafka0:/var/lib/kafka/data
+#    environment:
+#      KAFKA_NODE_ID: 1
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+#      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka0:29092,PLAINTEXT_HOST://localhost:9092'
+#      KAFKA_LISTENERS: 'PLAINTEXT://kafka0:29092,CONTROLLER://kafka0:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+#      KAFKA_PROCESS_ROLES: 'broker,controller'
+#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka0:29093
+#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+#      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+#      CLUSTER_ID: ${KAFKA_CLUSTER_ID:-MkU3OEVBNTcwNTJENDM2Qk}
+#
+#  kafka-schema-registry:
+#    image: confluentinc/cp-schema-registry
+#    container_name: kafka-schema-registry
+#    restart: always
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:29092
+#      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
+#      SCHEMA_REGISTRY_HOST_NAME: schemaregistry1
+#      SCHEMA_REGISTRY_LISTENERS: http://kafka-schema-registry:8081
+#      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
+#      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
+#      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+#    depends_on:
+#      - kafka0
+#
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui
+#    restart: always
+#    container_name: kafka-ui
+#    ports:
+#      - '18080:8080'
+#    environment:
+#      - DYNAMIC_CONFIG_ENABLED='true'
+#      - KAFKA_CLUSTERS_0_NAME=Local-Kafka-Broker
+#      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka0:29092
+#      - DYNAMIC_CONFIG_ENABLED=true
+#      - KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED=true
+#      - KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED=true
+#      - KAFKA_CLUSTERS_0_SCHEMAREGISTRY=http://kafka-schema-registry:8081
+#    depends_on:
+#      - kafka0
+#      - kafka-schema-registry
