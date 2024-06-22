@@ -331,9 +331,7 @@ terraform.rc
 
 .idea/
 
-config/development.yaml
-
-config/production.yaml
+config/*.yaml
 
 *credential.json
 

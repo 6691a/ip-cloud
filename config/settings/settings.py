@@ -20,7 +20,8 @@ from yaml import safe_load
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SETTING_FILE = environ.get("SETTING_FILE", "development.yaml")
+DEPLOY_LEVEL = environ.get("DEPLOY_LEVEL", "local").lower()
+SETTING_FILE = f"{DEPLOY_LEVEL}.yaml"
 
 with open(f"{BASE_DIR}/config/{SETTING_FILE}", "r") as file:
     cfg = safe_load(file)
@@ -57,6 +58,8 @@ INSTALLED_LIBRARY_APPS = [
     "phonenumber_field",
     "django_structlog",
     "simple_history",
+    # "django_celery_beat",
+    "django_celery_results",
 ]
 
 INSTALLED_PROJECT_APPS = [
@@ -283,3 +286,15 @@ DEFAULT_FROM_EMAIL = EMAIL["DEFAULT_FROM_EMAIL"]
 
 # Kafka
 KAFKA = cfg["KAFKA"]
+
+
+# Celery
+CELERY = cfg["CELERY"]
+CELERY_BROKER_URL = CELERY["BROKER_URL"]
+CELERY_RESULT_BACKEND = CELERY["RESULT_BACKEND"]
+CELERY_TIMEZONE = CELERY["TIMEZONE"]
+CELERY_TASK_SERIALIZER = CELERY["TASK_SERIALIZER"]
+CELERY_RESULT_SERIALIZER = CELERY["RESULT_SERIALIZER"]
+CELERY_TASK_RESULT_EXPIRES = CELERY["TASK_RESULT_EXPIRES"]
+CELERY_TASK_SOFT_TIME_LIMIT = CELERY["TASK_SOFT_TIME_LIMIT"]
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = CELERY["BROKER_CONNECTION_RETRY_ON_STARTUP"]
