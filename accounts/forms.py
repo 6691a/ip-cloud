@@ -21,6 +21,9 @@ class ReVerificationForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+    gender = forms.ChoiceField(choices=Gender.choices)
+    phone = PhoneNumberField(widget=PhoneNumberPrefixWidget())
+
     class Meta:
         model = Accounts
         fields = ["name", "gender", "phone"]

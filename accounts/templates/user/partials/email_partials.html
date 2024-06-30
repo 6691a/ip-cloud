@@ -1,0 +1,10 @@
+{# default: default email value #}
+{# disable: disable the email input field #}
+
+<label for="email" class="form-label">Email</label>
+<input class="form-control"
+       type="text"
+       id="email"
+       name="email"
+       value="{{ default|default_if_none:'' }}"
+       {% if disable %}disabled{% endif %}>

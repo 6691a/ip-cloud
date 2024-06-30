@@ -12,11 +12,15 @@ from allauth.account.views import SignupView as AllauthSignupView
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.utils import translation
+from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import FormView, UpdateView
 from phonenumber_field.widgets import localized_choices
+from phonenumbers import region_code_for_country_code
 
 from accounts.forms import ProfileForm, ReVerificationForm, SignupForm
+from utility.form.choices.country import phone_country_code_choices
 from utility.form.mixin import LayoutBlankMixin, LayoutMixin
 
 User = get_user_model()
@@ -100,10 +104,45 @@ class PasswordForgotView(LayoutBlankMixin, AllauthPasswordResetView):
     success_url = "/accounts/password/forgot/done/"
 
 
-class ProfileView(LayoutMixin, LoginRequiredMixin, UpdateView):
+class ProfileView(LayoutMixin, LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     template_name = "user/info.html"
     form_class = ProfileForm
     model = User
+    success_message = "Profile updated successfully."
+    success_url = "/accounts/profile/"
+
+    def get_initial(self):
+        account = self.request.user
+        if not account.is_authenticated:
+            return {}
+
+        country_code, phone = account.phone.as_international.split(" ")
+        country_code = region_code_for_country_code(int(country_code.replace("+", "")))
+        initial = {
+            "name": account.name,
+            "email": account.email,
+            "gender": account.gender,
+            "phone": phone,
+            "phone_country": country_code,
+        }
+        return initial
+
+    def get_context_data(self, **kwargs) -> dict:
+        choices = phone_country_code_choices(translation.get_language())
+        context = super().get_context_data(countries=choices, **kwargs)
+        return context
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+class DeleteView(LoginRequiredMixin, DjangoDeleteView):  # type: ignore
+    model = User
+    success_url = "/"
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        return response

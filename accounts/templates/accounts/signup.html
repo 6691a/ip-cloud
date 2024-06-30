@@ -12,8 +12,6 @@
           href="{% static 'vendor/libs/@form-validation/umd/styles/index.min.css' %}" />
     <link rel="stylesheet"
           href="{% static 'vendor/libs/bootstrap-select/bootstrap-select.css' %}" />
-    <link rel="stylesheet"
-          href="{% static 'vendor/libs/select2/select2.css' %}" />
 {% endblock vendor_css %}
 
 {% block vendor_js %}
@@ -22,8 +20,6 @@
     <script src="{% static 'vendor/libs/@form-validation/umd/plugin-auto-focus/index.min.js' %}"></script>
     <script src="{% static 'vendor/libs/@form-validation/umd/plugin-bootstrap5/index.min.js' %}"></script>
     <script src="{% static 'vendor/libs/bootstrap-select/bootstrap-select.js' %}"></script>
-    <script src="{% static 'vendor/libs/select2/select2.js' %}"></script>
-    <script src="{% static 'js/forms-selects.js' %}"></script>
 {% endblock vendor_js %}
 
 {% block page_css %}
@@ -210,7 +206,7 @@
                         <div class="divider-text">or</div>
                     </div>
 
-                    {% include "accounts/partials/social_account.html" %}
+                    {% include "accounts/partials/social_account_partials.html" %}
                 </div>
             </div>
             <!-- /Register -->

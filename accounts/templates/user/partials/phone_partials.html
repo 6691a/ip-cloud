@@ -1,0 +1,29 @@
+{# select_error: select error display #}
+{# phone_error: phone field error display #}
+{# countries: select choices field #}
+{# default_phone: default phone value #}
+{# default_country: selected country value #}
+
+<label for="organization" class="form-label">Phone</label>
+<div class="d-flex justify-content-between align-items-center">
+    <div class="col-md-3">
+        <select id="selectpickerLiveSearch"
+                class="selectpicker w-100{% if error %} is-invalid{% endif %}"
+                data-style="btn-default"
+                data-live-search="true"
+                name="phone_0">
+            {% for value, label in countries %}
+                <option value="{{ value }}"
+                        {% if value == default_country %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <input type="text"
+           class="form-control phone-number-mask{% if phone_error %} is-invalid{% endif %}"
+           id="phone"
+           name="phone_1"
+           autocorrect="off"
+           placeholder="Enter your phone"
+           value="{{ default_phone|default_if_none:'' }}">
+
+</div>
