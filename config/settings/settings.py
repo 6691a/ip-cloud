@@ -66,7 +66,6 @@ INSTALLED_PROJECT_APPS = [
     # "index",
     "accounts",
     "network",
-    "instance",
 ]
 
 INSTALLED_APPS += INSTALLED_LIBRARY_APPS + INSTALLED_PROJECT_APPS
