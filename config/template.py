@@ -22,7 +22,7 @@ TEMPLATE_CONFIG = {  #
     # Display customizer UI or not, THIS WON'T REMOVE INCLUDED JS FILE. SO LOCAL STORAGE WILL WORK
     "display_customizer": True,
     # options[String]: 'compact', 'wide' (compact=container-xxl, wide=container-fluid)
-    "content_layout": "compact",
+    "content_layout": "wide",
     # options[String]: 'fixed', 'static', 'hidden' (Only for vertical Layout)
     "navbar_type": "fixed",
     # options[String]: 'static', 'fixed' (for horizontal layout only)

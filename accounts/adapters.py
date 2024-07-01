@@ -29,8 +29,7 @@ def _base64_encode(value: str):
 
 class AccountAdapter(DefaultAccountAdapter):
     def send_mail(self, template_prefix: str, email: str, context: dict):
-        with ThreadPoolExecutor() as executor:
-            executor.submit(super().send_mail, template_prefix, email, context)
+        ThreadPoolExecutor().submit(super().send_mail, template_prefix, email, context)
 
     def respond_email_verification_sent(self, request: HttpRequest, user) -> HttpResponseRedirect:
         request.session["email"] = request.POST.get("email")

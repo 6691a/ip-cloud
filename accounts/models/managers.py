@@ -2,11 +2,15 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from django.contrib.auth.base_user import BaseUserManager
 
+from utility.model import DeleteTimeStampModelManager
+
 if TYPE_CHECKING:
+    from utility.model import DeleteTimeStampModel  # noqa: F401
+
     from .models import Accounts
 
 
-class AccountsManager(BaseUserManager["Accounts"]):
+class AccountsManager(BaseUserManager["Accounts"], DeleteTimeStampModelManager["DeleteTimeStampModel"]):
     def create_user(self, email: str, password: Optional[str], **kwargs: Any) -> "Accounts":
         """
         Creates and saves a User with the given email and password.

@@ -1,0 +1,9 @@
+{# default: name default value #}
+<label for="Name" class="form-label">Name</label>
+<input class="form-control"
+       type="text"
+       id="name"
+       name="name"
+       value="{{ default|default_if_none:'' }}"
+       autofocus="">
+<div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>

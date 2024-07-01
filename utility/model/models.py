@@ -35,12 +35,19 @@ class DeleteTimeStampModel(TimeStampModel):
 
     objects = DeleteTimeStampModelManager()
 
+    def is_deleted(self):
+        """
+        Check if the object is deleted.
+        """
+        return bool(self.deleted)
+
     def delete(self, using=None, keep_parents=False):
         """
         Soft delete the object by setting the ``deleted`` field to the current date and time.
         """
         self.deleted = timezone.now()
         self.save()
+        return self
 
     class Meta:
         abstract = True

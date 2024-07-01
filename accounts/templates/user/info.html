@@ -1,8 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
-    <body>{{ form.as_p }}</body>
-</html>
+{% extends layout_path %}
+
+{% load static %}
+
+{% block title %}Login Cover - Pages{% endblock %}
+
+{% block vendor_css %}
+    {{ block.super }}
+    <link rel="stylesheet"
+          href="{% static 'vendor/libs/@form-validation/umd/styles/index.min.css' %}" />
+    <link rel="stylesheet"
+          href="{% static 'vendor/libs/bootstrap-select/bootstrap-select.css' %}" />
+{% endblock vendor_css %}
+
+{% block vendor_js %}
+    {{ block.super }}
+    <script src="{% static 'vendor/libs/@form-validation/umd/bundle/popular.min.js' %}"></script>
+    <script src="{% static 'vendor/libs/@form-validation/umd/plugin-bootstrap5/index.min.js' %}"></script>
+    <script src="{% static 'vendor/libs/@form-validation/umd/plugin-auto-focus/index.min.js' %}"></script>
+    <script src="{% static 'vendor/libs/bootstrap-select/bootstrap-select.js' %}"></script>
+    <script src="{% static 'js/forms-selects.js' %}"></script>
+{% endblock vendor_js %}
+
+{% block page_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'vendor/css/pages/page-auth.css' %}" />
+{% endblock page_css %}
+
+{% block page_js %}
+    {{ block.super }}
+    <script src="{% static 'js/pages-auth.js' %}"></script>
+
+    <script src="{% static 'js/ui-toasts.js' %}"></script>
+{% endblock page_js %}
+
+{% block content %}
+    {{ form.errors }}
+    <div class="row fv-plugins-icon-container">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <h5 class="card-header">Profile Details</h5>
+                <div class="card-body">
+                    <form id="formAccountSettings"
+                          method="POST"
+                          action="{% url 'accounts:profile' %}"
+                          class="fv-plugins-bootstrap5 fv-plugins-framework"
+                          novalidate="novalidate">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3 col-md-6 fv-plugins-icon-container">
+                                {% include "user/partials/name_partials.html" with default=form.initial.name %}
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                {% include "user/partials/email_partials.html" with default=form.initial.email disable=True %}
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                {% include "user/partials/phone_partials.html" with countries=countries default_country=form.initial.phone_country default_phone=form.initial.phone %}
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                {% include "user/partials/gender_partials.html" with gender=form.gender.field.choices default=form.initial.gender errors=form.gender.errors %}
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <button type="submit" class="btn btn-primary me-2 waves-effect waves-light">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /Account -->
+            </div>
+            <div class="card">{% include "user/partials/delete_partials.html" %}</div>
+        </div>
+    </div>
+{% endblock content %}

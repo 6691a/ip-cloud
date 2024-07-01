@@ -1,0 +1,18 @@
+{# gender: gender choices #}
+{# default: gender default value #}
+{# errors: gender errors #}
+
+<label for="gender" class="form-label">Gender</label>
+<select id="gender"
+        class="selectpicker w-100{% if errors %} is-invalid{% endif %}"
+        data-style="btn-default"
+        name="gender">
+    {% for value, label in gender %}
+        <option value="{{ value }}" {% if value == default %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+</select>
+{% if errors %}
+    {% for error in errors %}
+        <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">{{ error }}</div>
+    {% endfor %}
+{% endif %}

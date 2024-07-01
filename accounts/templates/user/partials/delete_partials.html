@@ -1,0 +1,26 @@
+<h5 class="card-header">Delete Account</h5>
+<div class="card-body">
+    <div class="mb-3 col-12 mb-0">
+        <div class="alert alert-warning">
+            <h5 class="alert-heading mb-1">Are you sure you want to delete your account?</h5>
+            <p class="mb-0">Once you delete your account, there is no going back. Please be certain.</p>
+        </div>
+    </div>
+    <form id="formAccountDeactivation"
+          class="fv-plugins-bootstrap5 fv-plugins-framework"
+          novalidate="novalidate"
+          method="POST"
+          action="{% url 'accounts:delete' %}">
+        {% csrf_token %}
+        <div class="form-check mb-4">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="accountActivation"
+                   id="accountActivation">
+            <label class="form-check-label" for="accountActivation">I confirm my account deactivation</label>
+            <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+        </div>
+        <button type="submit"
+                class="btn btn-danger deactivate-account waves-effect waves-light">Deactivate Account</button>
+    </form>
+</div>

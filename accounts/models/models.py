@@ -3,12 +3,13 @@ from random import randint
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import IntegrityError, models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from simple_history.models import HistoricalRecords
 from structlog import get_logger
 
-from utility.model import TimeStampModel
+from utility.model import DeleteTimeStampModel
 
 from .choices import Gender
 from .managers import AccountsManager
@@ -16,7 +17,7 @@ from .managers import AccountsManager
 logging = get_logger(__name__)
 
 
-class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampModel):
+class Accounts(AbstractBaseUser, PermissionsMixin, DeleteTimeStampModel):
     email = models.EmailField(_("email address"), unique=True, db_column="email")
     name = models.CharField(_("name"), max_length=30, blank=True, db_column="name")
     gender = models.CharField(_("gender"), max_length=1, choices=Gender.choices, blank=True, db_column="gender")
@@ -45,7 +46,7 @@ class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampModel):
         help_text=_("Designates whether the user can log into this admin site."),
     )
     history = HistoricalRecords()
-    objects = AccountsManager()
+    objects = AccountsManager()  # type: ignore
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -81,3 +82,8 @@ class Accounts(AbstractBaseUser, PermissionsMixin, TimeStampModel):
             logging.error(f"Infinite loop occurred while creating alias for {self.email}")
             if err:
                 raise err
+
+    def delete(self, using=None, keep_parents=False):
+        self.deleted = timezone.now()
+        self.is_active = False
+        self.save()
