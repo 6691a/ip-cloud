@@ -60,12 +60,16 @@ INSTALLED_LIBRARY_APPS = [
     "simple_history",
     # "django_celery_beat",
     "django_celery_results",
+    "taggit",
 ]
 
 INSTALLED_PROJECT_APPS = [
     # "index",
     "accounts",
     "network",
+    "region",
+    "compute",
+    "compute.minecraft",
 ]
 
 INSTALLED_APPS += INSTALLED_LIBRARY_APPS + INSTALLED_PROJECT_APPS
@@ -100,6 +104,9 @@ TEMPLATES = [
                 "django.template.context_processors.i18n",
                 # "utility.template.context_processors.toast_tags",
             ],
+            "libraries": {
+                "theme": "utility.template.theme",
+            },
             "builtins": [
                 "utility.template.theme",
             ],

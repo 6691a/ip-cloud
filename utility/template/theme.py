@@ -22,6 +22,22 @@ def get_theme_config(scope: str) -> str:
     return mark_safe(TemplateHelper.get_theme_config(scope))
 
 
+@register.filter
+def filter_by_url(submenu, url):
+    if submenu:
+        for subitem in submenu:
+            subitem_url = subitem.get("url")
+            if subitem_url == url.path or subitem_url == url.resolver_match.url_name:
+                return True
+
+            # Recursively check for submenus
+            elif subitem.get("submenu"):
+                if filter_by_url(subitem["submenu"], url):
+                    return True
+
+    return False
+
+
 # Core TemplateHelper class
 class TemplateHelper:
     # Init the Template Context using TEMPLATE_CONFIG
@@ -74,9 +90,7 @@ class TemplateHelper:
             context["navbar_type_class"] = ""
 
         # Menu collapsed
-        context["menu_collapsed_class"] = (
-            "layout-menu-collapsed" if context.get("menu_collapsed") else ""
-        )
+        context["menu_collapsed_class"] = "layout-menu-collapsed" if context.get("menu_collapsed") else ""
 
         # ! Menu Fixed (vertical support only)
         if context.get("layout") == "vertical":
@@ -97,14 +111,10 @@ class TemplateHelper:
         )
 
         # ! Show dropdown on hover (Horizontal menu)
-        context["show_dropdown_onhover_value"] = (
-            "true" if context.get("show_dropdown_onhover") else "false"
-        )
+        context["show_dropdown_onhover_value"] = "true" if context.get("show_dropdown_onhover") else "false"
 
         # Display Customizer
-        context["display_customizer_class"] = (
-            "" if context.get("display_customizer") else "customizer-hide"
-        )
+        context["display_customizer_class"] = "" if context.get("display_customizer") else "customizer-hide"
 
         # Content Layout
         if context.get("content_layout") == "wide":

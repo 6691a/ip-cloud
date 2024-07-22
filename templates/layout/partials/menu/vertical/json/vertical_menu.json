@@ -2,9 +2,16 @@
   "menu": [
     {
       "url": "index:index",
-      "icon": "menu-icon tf-icons ti ti-smart-home",
-      "name": "Page 1",
-      "slug": "index"
+      "icon": "menu-icon tf-icons ti ti-device-desktop",
+      "name": "Games",
+      "submenu": [
+        {
+          "url": "compute:minecraft:home",
+          "src": "img/menus/minecraft.svg",
+          "alt": "Minecraft logo",
+          "name": "Minecraft"
+        }
+      ]
     }
   ]
 }
